@@ -20,8 +20,10 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/apache/iceberg-go/catalog"
@@ -35,8 +37,26 @@ func runSnapshots(ctx context.Context, output Output, cat catalog.Catalog, cmd *
 }
 
 func runRefs(ctx context.Context, output Output, cat catalog.Catalog, cmd *RefsCmd) {
+	filterType, err := normalizeRefTypeFilter(cmd.Type)
+	if err != nil {
+		output.Error(err)
+		osExit(1)
+
+		return
+	}
+
 	tbl := loadTable(ctx, output, cat, cmd.TableID)
-	output.Refs(tbl, cmd.Type)
+	output.Refs(tbl, filterType)
+}
+
+func normalizeRefTypeFilter(filterType string) (string, error) {
+	filterType = strings.ToLower(strings.TrimSpace(filterType))
+	switch filterType {
+	case "", string(table.BranchRef), string(table.TagRef):
+		return filterType, nil
+	default:
+		return "", fmt.Errorf("invalid --type: %q: execpted branch or tag", filterType)
+	}
 }
 
 func buildSnapshotEntries(tbl *table.Table) []SnapshotEntry {

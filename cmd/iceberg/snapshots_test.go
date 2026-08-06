@@ -195,6 +195,39 @@ func TestJSONOutputSnapshots(t *testing.T) {
 	assert.Contains(t, output, `"operation":"overwrite"`)
 }
 
+func TestNormalizeRefTypeFilter(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    string
+		wantErr string
+	}{
+		{"empty", "", "", ""},
+		{"branch", "branch", "branch", ""},
+		{"tag", "tag", "tag", ""},
+		{"uppercase branch", "BRANCH", "branch", ""},
+		{"mixed case tag", "TaG", "tag", ""},
+		{"trim spaces", " branch ", "branch", ""},
+		{"invalid", "brnch", "", "invalid --type"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := normalizeRefTypeFilter(tt.input)
+
+			if tt.wantErr != "" {
+				require.ErrorContains(t, err, tt.wantErr)
+				assert.Equal(t, "", got)
+
+				return
+			}
+
+			require.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func TestTextOutputRefs(t *testing.T) {
 	var buf bytes.Buffer
 	pterm.SetDefaultOutput(&buf)
