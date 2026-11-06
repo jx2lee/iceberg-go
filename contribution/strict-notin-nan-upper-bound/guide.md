@@ -25,7 +25,7 @@ NaN 상한일 때: Go 의 `cmp.Compare` 는 NaN 을 **가장 작은 값**으로 
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `table/evaluators.go` | 1690-1730 | `VisitNotEqual`: 하한·상한 모두 `m.isNan(...)` 검사 (모범 답안) |
+| `table/evaluators.go` | 1690-1732 | `VisitNotEqual`: 하한·상한 모두 `m.isNan(...)` 검사 (모범 답안) |
 | 같은 파일 | 1772-1810 | `VisitNotIn`: 하한만 검사 |
 | 같은 파일 | 104 | `removeBoundCheck`: 타입별 제네릭 비교 |
 | `table/evaluators_test.go` | 1283 | `mockDataFile`: 통계를 직접 넣어 만드는 테스트용 가짜 DataFile |
@@ -81,7 +81,7 @@ func TestStrictNotInNaNUpperBound(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24 실행):
+수정 전 결과(2026-11-06, main `2e69b8a` 실행):
 
 ```text
 NotIn(term=Reference(name='x'), {[7 8]}): strict evaluator claimed every row matches

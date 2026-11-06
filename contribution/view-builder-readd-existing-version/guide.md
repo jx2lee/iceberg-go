@@ -22,9 +22,9 @@ Java 의 규칙: 이미 있으면 **항상 기존 ID 를 반환**하고, `lastAd
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `view/metadata_builder.go` | 114-132 | `SetCurrentVersion`: schema 추가 → `addVersion` → `SetCurrentVersionID` |
-| 같은 파일 | 147-200 | `addVersion`: 문제의 early-return 이 for 문 **안**에만 있음 |
-| 같은 파일 | 505-516 | `reuseOrCreateNewVersionID`: `Equals` 가 같으면 기존 ID 반환(ID·timestamp 는 비교하지 않음) |
+| `view/metadata_builder.go` | 115-133 | `SetCurrentVersion`: schema 추가 → `addVersion` → `SetCurrentVersionID` |
+| 같은 파일 | 148-209 | `addVersion`: 문제의 early-return 이 for 문 **안**에만 있음 |
+| 같은 파일 | 506-517 | `reuseOrCreateNewVersionID`: `Equals` 가 같으면 기존 ID 반환(ID·timestamp 는 비교하지 않음) |
 | `view/metadata_builder_test.go` | 35-70 | `newTestBuilder`, `newTestVersionWithSQL`, `newTestSchema` 헬퍼 |
 
 Go 개념 메모:
@@ -99,7 +99,7 @@ func TestSetCurrentVersionRevertsToEarlierVersion(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24 실행): 두 테스트 모두 `invalid view metadata: duplicate version-id 1` 로 FAIL. 수정 후에는 `go test ./view/...` 전체가 통과합니다.
+수정 전 결과(2026-11-06, main `2e69b8a` 실행): 두 테스트 모두 `invalid view metadata: duplicate version-id 1` 로 FAIL. 수정 후에는 `go test ./view/...` 전체가 통과합니다.
 
 ## 6. 실행
 

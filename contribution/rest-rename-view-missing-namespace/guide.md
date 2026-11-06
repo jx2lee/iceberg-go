@@ -10,11 +10,11 @@
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `catalog/rest/rest.go` | 2167-2210 | `RenameTable`: 모범 답안. 주석까지 그대로 참고 |
-| 같은 파일 | 2791-2830 | `RenameView`: 고칠 곳 |
-| 같은 파일 | 423-430 | `withErrorTypeOverride`: 응답 body 의 `error.type` 문자열 → Go 에러 매핑 옵션 |
+| `catalog/rest/rest.go` | 2140-2182 | `RenameTable`: 모범 답안. 주석까지 그대로 참고 |
+| 같은 파일 | 2720-2759 | `RenameView`: 고칠 곳 |
+| 같은 파일 | 431-438 | `withErrorTypeOverride`: 응답 body 의 `error.type` 문자열 → Go 에러 매핑 옵션 |
 | `catalog/rest/scan_planning.go` | 100 | `errTypeNoSuchNamespace = "NoSuchNamespaceException"` 상수 |
-| `catalog/rest/rest_test.go` | 2148-2240 | `RenameTable` 의 404 테스트들. 테스트도 이걸 따라 작성 |
+| `catalog/rest/rest_test.go` | 2181-2240 | `RenameTable` 의 404 테스트들. 테스트도 이걸 따라 작성 |
 | 같은 파일 | 3871 | `TestRenameView404`: 기존 view 테스트 |
 
 Go 개념 메모:
@@ -63,7 +63,7 @@ func (r *RestCatalogSuite) TestRenameView404MissingNamespace() {
 }
 ```
 
-수정 전 결과(2026-10-24 실행): `--- FAIL: TestRestCatalog/TestRenameView404MissingNamespace`. 수정 후 통과.
+수정 전 결과(2026-11-06, main `2e69b8a` 실행): `--- FAIL: TestRestCatalog/TestRenameView404MissingNamespace`. 수정 후 통과.
 
 suite 메서드만 골라 실행하는 방법:
 

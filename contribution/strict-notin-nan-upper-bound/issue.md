@@ -1,7 +1,7 @@
 # Strict metrics evaluator: NotIn returns "rows must match" when the upper bound is NaN
 
-- Issue: 없음 (2026-10-24 검색: PR "strict NaN", "NaN evaluator", issue "NaN bound", "NaN" → #1103/#1106(strict NotEq/NotIn 의 null·NaN count), #1091/#1098, #2131 은 다른 문제)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: PR "strict NaN", "NaN evaluator", issue "NaN bound", "NaN" → #1103/#1106(strict NotEq/NotIn 의 null·NaN count), #1091/#1098, #2131 은 다른 문제)
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 
@@ -25,7 +25,7 @@ Go's float comparison (`cmp.Compare`) orders NaN **below** every number, so `rem
 - `VisitNotEqual` in the same file checks both bounds for NaN ("NaN indicates unreliable bounds"). So a one-value `NotIn` (bound as `NotEqual`) is correct and a two-value `NotIn` is not.
 - Java's `StrictMetricsEvaluator` treats NaN bounds as unreliable as well. Java's `Double.compare` also orders NaN above everything, so in Java a NaN upper bound removes nothing.
 
-Spec-compliant writers do not put NaN in bounds, but older or foreign writers did, which is why the NaN guards exist. Strict evaluation is used by `Delete` to decide whether a file can be dropped whole (`table/transaction.go:2845`). On a file with rows `{7.0, NaN}`, `lower=7.0` and `upper=NaN`, the evaluator says every row satisfies `x NOT IN (7.0, 8.0)`, which is wrong for the `7.0` row.
+Spec-compliant writers do not put NaN in bounds, but older or foreign writers did, which is why the NaN guards exist. Strict evaluation is used by `Delete` to decide whether a file can be dropped whole (`table/transaction_delete.go:391`). On a file with rows `{7.0, NaN}`, `lower=7.0` and `upper=NaN`, the evaluator says every row satisfies `x NOT IN (7.0, 8.0)`, which is wrong for the `7.0` row.
 
 ### Repro
 

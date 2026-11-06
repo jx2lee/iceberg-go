@@ -1,7 +1,7 @@
 # Snapshot summary: total-* counters are invented when the parent summary does not have them
 
-- Issue: 없음 (2026-10-24 검색: "snapshot summary total", "updateSnapshotSummaries", "total-records summary", "summary totals missing" → #1582(int64 totals, merged) 는 무관. #2215 는 DV 카운트 문제로 다름)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: "snapshot summary total", "updateSnapshotSummaries", "total-records summary", "summary totals missing" → #1582(int64 totals, merged) 는 무관. #2215 는 DV 카운트 문제로 다름)
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 
@@ -11,7 +11,7 @@ main (development)
 
 ### Please describe the bug 🐞
 
-`updateSnapshotSummaries` (`table/snapshots.go:738-746`) starts each total from `previous.GetInt64(totalProp, 0)`. A total that is **missing** from the parent summary, or does not parse, is treated as 0, and the new snapshot gets a total that only counts this commit.
+`updateSnapshotSummaries` (`table/snapshots.go:763-771`) starts each total from `previous.GetInt64(totalProp, 0)`. A total that is **missing** from the parent summary, or does not parse, is treated as 0, and the new snapshot gets a total that only counts this commit.
 
 Java's `SnapshotProducer.updateTotal` only carries a total forward when the previous summary has it:
 

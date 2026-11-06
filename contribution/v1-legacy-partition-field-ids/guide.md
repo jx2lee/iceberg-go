@@ -22,7 +22,7 @@ spec 1: [x, y]    Java: x=1000, y=1001   Go: x=1001, y=1002   ← 어긋남
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `table/metadata.go` | 2255-2345 | `assignMissingPartitionFieldIDs(FromMetadata)`: metadata JSON 을 `map[string]json.RawMessage` 로 열어서 빠진 `field-id` 를 채운 뒤 다시 직렬화 |
+| `table/metadata.go` | 2261-2358 | `assignMissingPartitionFieldIDs(FromMetadata)`: metadata JSON 을 `map[string]json.RawMessage` 로 열어서 빠진 `field-id` 를 채운 뒤 다시 직렬화 |
 | 같은 파일 | `rawPartitionSpec` | spec 의 fields 를 `[]map[string]json.RawMessage` 로 들고 있는 임시 구조체 |
 | `manifest.go` | `getFieldIDMap`, `dataFile.Partition()` | manifest Avro 스키마의 field-id 로 partition 값을 찾음 |
 | `table/metadata_internal_test.go` | | #1514 테스트(`TestAssignMissingPartitionFieldIDsAcrossSpecs` 등) |
@@ -139,7 +139,7 @@ func TestLegacyV1PartitionFieldIDsPerSpec(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24 실행):
+수정 전 결과(2026-11-06, main `2e69b8a` 실행):
 
 ```text
 spec 1 field IDs: [1001 1002] (Java: [1000 1001])

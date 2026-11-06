@@ -21,8 +21,8 @@ snapshot summary 는 `map[string]string` 입니다. `added-records` 는 이번 �
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `table/snapshots.go` | 716-756 | `updateSnapshotSummaries`. 728-736 이 `previous == nil` 일 때 0 기본값, 738-746 이 `updateTotals` 클로저 |
-| `table/snapshot_producers.go` | 1365 | `rebaseSummary`: 호출하는 곳 |
+| `table/snapshots.go` | 741-781 | `updateSnapshotSummaries`. 752-761 이 `previous == nil` 일 때 0 기본값, 763-771 이 `updateTotals` 클로저 |
+| `table/snapshot_producers.go` | 1441 | `rebaseSummary`: 호출하는 곳 |
 | `iceberg.Properties.GetInt64` | | 키가 없거나 파싱에 실패하면 기본값을 돌려주는 헬퍼. 이 helper 가 "없음"을 0 으로 뭉개는 원인 |
 
 Go 개념 메모:
@@ -91,7 +91,7 @@ func TestSummaryTotalNotResurrectedAfterInvalidation(t *testing.T) {
 
 `assert.NotContains(t, map, key)` 는 map 에 그 key 가 없는지 확인합니다.
 
-수정 전 결과(2026-10-24 실행):
+수정 전 결과(2026-11-06, main `2e69b8a` 실행):
 
 ```text
 total-records=5 fabricated; parent had no such total

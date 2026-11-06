@@ -1,7 +1,7 @@
 # UpdateSchema: case-insensitive rename of an identifier column fails with "identifier field not found"
 
-- Issue: 없음 (2026-10-24 검색: "rename column identifier case insensitive", "identifier field case-insensitive", "rename identifier field" → #1689(SetIdentifierField 순서, closed), #1359, #2076 은 무관)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: "rename column identifier case insensitive", "identifier field case-insensitive", "rename identifier field" → #1689(SetIdentifierField 순서, closed), #1359, #2076 은 무관)
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 

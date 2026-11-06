@@ -65,7 +65,7 @@ func TestRenameFieldOntoVoidField(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24 실행):
+수정 전 결과(2026-11-06, main `2e69b8a` 실행):
 
 ```text
 new spec: [ 1000: id_identity_1001: identity(1)   1001: street_void: void(5) ]
@@ -83,4 +83,4 @@ git commit -s -m "fix(table): move the void field aside when renaming onto its n
 
 ## 7. 주의
 
-- 파일 위쪽에 같은 이름의 기존 테스트가 있는지 먼저 확인하세요: `grep -n "Void" table/update_spec_test.go`. 혹시 기존 테스트가 "잘못된 동작"을 고정하고 있으면 그 테스트도 같이 고쳐야 하고, PR 본문에 그 사실을 적어야 합니다(2026-10-24 기준 수정 후 `./table/...` 전체 통과이므로 그런 테스트는 없음).
+- 파일 위쪽에 같은 이름의 기존 테스트가 있는지 먼저 확인하세요: `grep -n "Void" table/update_spec_test.go`. 혹시 기존 테스트가 "잘못된 동작"을 고정하고 있으면 그 테스트도 같이 고쳐야 하고, PR 본문에 그 사실을 적어야 합니다(2026-11-06 기준 수정 후 `./table/...` 전체 통과이므로 그런 테스트는 없음).

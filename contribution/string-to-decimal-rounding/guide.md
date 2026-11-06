@@ -51,9 +51,10 @@
 
 ```go
 func TestStringToDecimalRejectsRounding(t *testing.T) {
-	typ := iceberg.DecimalTypeOf(9, 2)
+	typ, err := iceberg.DecimalTypeOf(9, 2)
+	require.NoError(t, err)
 
-	_, err := iceberg.NewLiteral("1.555").To(typ)
+	_, err = iceberg.NewLiteral("1.555").To(typ)
 	assert.ErrorIs(t, err, iceberg.ErrBadCast)
 
 	// exact values, including ones with fewer fractional digits, still convert
@@ -66,7 +67,7 @@ func TestStringToDecimalRejectsRounding(t *testing.T) {
 
 `"1.550"` 은 자릿수는 많지만 값의 손실이 없으므로 안 (b) 에서는 통과합니다. 안 (a) 라면 이 줄은 에러 쪽으로 옮깁니다.
 
-수정 전 결과(2026-10-24, 필터 평가까지 포함한 재현 테스트):
+수정 전 결과(2026-11-06 main `2e69b8a` 재확인, 필터 평가까지 포함한 재현 테스트):
 
 ```text
 expected scale-mismatch error, got 1.56

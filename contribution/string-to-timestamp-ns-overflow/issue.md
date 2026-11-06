@@ -1,7 +1,7 @@
 # literals: string cast to timestamp_ns / timestamptz_ns silently wraps outside the nanosecond range
 
-- Issue: 없음 (2026-10-24 검색: PR "timestamp nanosecond overflow" → #1533(merged, `TimestampLiteral` 경로만). issue "timestamp nanosecond overflow", "string timestamp_ns" 결과 없음)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: PR "timestamp nanosecond overflow" → #1533(merged, `TimestampLiteral` 경로만). issue "timestamp nanosecond overflow", "string timestamp_ns" 결과 없음)
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 
@@ -11,9 +11,9 @@ main (development)
 
 ### Please describe the bug 🐞
 
-`StringLiteral.To(TimestampNsType / TimestampTzNsType)` (`literals.go:1014-1031`) converts with `tm.UTC().UnixNano()`. Go documents `UnixNano` as undefined outside roughly 1677-09-21 … 2262-04-11, and in practice it wraps around. The cast returns a wrong value instead of an error.
+`StringLiteral.To(TimestampNsType / TimestampTzNsType)` (`literals.go:1019-1036`) converts with `tm.UTC().UnixNano()`. Go documents `UnixNano` as undefined outside roughly 1677-09-21 … 2262-04-11, and in practice it wraps around. The cast returns a wrong value instead of an error.
 
-#1533 added a range check to `TimestampLiteral.To(TimestampNs)` (`literals.go:836-839`), but the string path was missed.
+#1533 added a range check to `TimestampLiteral.To(TimestampNs)` (`literals.go:842-844`), but the string path was missed.
 
 Java's `StringLiteral.to(TIMESTAMP_NANO)` uses `DateTimeUtil.isoTimestampToNanos` → `ChronoUnit.NANOS.between`, which uses checked arithmetic and throws `ArithmeticException`.
 

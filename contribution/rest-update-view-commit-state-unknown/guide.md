@@ -12,14 +12,16 @@ table commit 은 5xx 를 "커밋 됐는지 모름(`ErrCommitStateUnknown`)"으�
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `catalog/rest/rest.go` | 1843-1851 | `CommitTable`: 4개 5xx → `ErrCommitStateUnknown` (모범 답안) |
-| 같은 파일 | 2677-2709 | `UpdateView`: 2703 줄 map 에 404/409 만 있음 |
-| `catalog/rest/rest_test.go` | 4276-4320 | `TestCommitTableErrCommitStateUnknown`: 테스트도 이걸 복사해서 수정 |
+| `catalog/rest/rest.go` | 1814-1823 | `CommitTable`: 4개 5xx → `ErrCommitStateUnknown` (모범 답안) |
+| 같은 파일 | 2606-2638 | `UpdateView`: 2632 줄 map 에 404/409 만 있음 |
+| `catalog/rest/rest_test.go` | 4276-4319 | `TestCommitTableErrCommitStateUnknown`: 테스트도 이걸 복사해서 수정 |
 | 같은 파일 | 3720 | `TestUpdateViewLabels`: view commit 경로(`/v1/namespaces/<ns>/views/<name>`) 예시 |
 
 Go 개념 메모:
 - `map[int]error{...}` 는 HTTP status → sentinel error 매핑표입니다. `doPost` 가 응답 코드로 이 표를 찾아 에러를 감쌉니다.
 - `r.Run(name, func(){...})` 는 testify suite 의 **subtest** 입니다. `-run 'TestRestCatalog/TestUpdateViewErrCommitStateUnknown/502'` 처럼 하나만 돌릴 수 있습니다.
+
+2026-11-02 에 머지된 #2350 이 `CommitTable` 에 400/401/403/404 → `table.ErrCommitRejected`(서버가 아무것도 쓰지 않고 거절함) 매핑을 추가했습니다. view 쪽에는 `ErrCommitRejected` 에 해당하는 개념이 아직 없으니, 이 PR 에서는 5xx 만 옮기고 4xx 는 리뷰에서 요청이 나오면 따로 하겠다고 PR 본문에 적어 두세요.
 
 ## 3. 수정
 
@@ -75,7 +77,7 @@ func (r *RestCatalogSuite) TestUpdateViewErrCommitStateUnknown() {
 }
 ```
 
-수정 전 결과(2026-10-24 실행): 4개 subtest 가 모두 FAIL 이고, 수정 후에는 통과합니다.
+수정 전 결과(2026-11-06, main `2e69b8a` 실행): 4개 subtest 가 모두 FAIL 이고, 수정 후에는 통과합니다.
 
 ## 5. 실행
 

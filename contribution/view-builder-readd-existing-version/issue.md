@@ -1,7 +1,7 @@
 # view: MetadataBuilder appends a duplicate when re-adding a version that already exists in the base
 
-- Issue: 없음 (2026-10-24 검색: issue "view duplicate version", "duplicate version-id", PR "view version reuse", "addVersion view builder" → #2108/#2109(version-log), #1525(parse 시 중복 거부) 는 다른 문제)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: issue "view duplicate version", "duplicate version-id", PR "view version reuse", "addVersion view builder" → #2108/#2109(version-log), #1525(parse 시 중복 거부) 는 다른 문제)
+- Verified against main `2e69b8a` (2026-11-06)
 - 영향 범위: repo 안에서 base metadata 에서 시작해 view update 를 적용하는 곳은 없음(non-REST catalog 는 UpdateView 미구현). 공개 API `view.MetadataBuilderFromBase` + `SetCurrentVersion` / `AddViewVersionUpdate.Apply` 를 쓰는 사용자(예: Go 로 만든 REST catalog 서버)가 영향을 받음
 
 ## Issue 본문 초안
@@ -12,7 +12,7 @@ main (development)
 
 ### Please describe the bug 🐞
 
-`view.MetadataBuilder.addVersion` (`view/metadata_builder.go:147-163`) finds an existing identical version through `reuseOrCreateNewVersionID`, but returns early only if that version was added **in this builder**:
+`view.MetadataBuilder.addVersion` (`view/metadata_builder.go:148-164`) finds an existing identical version through `reuseOrCreateNewVersionID`, but returns early only if that version was added **in this builder**:
 
 ```go
 if _, ok := b.versionsById[newVersionID]; ok {

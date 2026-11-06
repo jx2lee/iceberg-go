@@ -1,7 +1,7 @@
 # literals: string cast to decimal silently rounds extra fractional digits
 
-- Issue: 없음 (2026-10-24 검색: PR "decimal string scale", "decimal FromString", "StringLiteral", issue "decimal scale literal", "decimal round" → #2092(DecimalLiteral→Int, 해결됨), #1028, #1129(manifest decimal precision, open) 는 다른 문제)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: PR "decimal string scale", "decimal FromString", "StringLiteral", issue "decimal scale literal", "decimal round" → #2092(DecimalLiteral→Int, 해결됨), #1028, #1129(manifest decimal precision, open) 는 다른 문제)
+- Verified against main `2e69b8a` (2026-11-06)
 - **먼저 방향 질문**: Java 는 scale 이 정확히 같지 않으면 모두 거부합니다("1.5" → decimal(9,2) 도 거부). Go 에서 그대로 따르면 지금 되는 "1.5" 가 깨집니다. 어느 쪽으로 할지 메인테이너에게 먼저 물어보세요.
 
 ## Issue 본문 초안
@@ -12,7 +12,7 @@ main (development)
 
 ### Please describe the bug 🐞
 
-`StringLiteral.To(DecimalType)` (`literals.go:1040-1047`) calls `decimal128.FromString(s, precision, scale)`, which **rounds** a string with more fractional digits than the column scale and returns no error. `"1.555"` cast to `decimal(9,2)` becomes `1.56`.
+`StringLiteral.To(DecimalType)` (`literals.go:1045-1052`) calls `decimal128.FromString(s, precision, scale)`, which **rounds** a string with more fractional digits than the column scale and returns no error. `"1.555"` cast to `decimal(9,2)` becomes `1.56`.
 
 A rounded bound changes predicate results:
 

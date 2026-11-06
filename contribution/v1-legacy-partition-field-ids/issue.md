@@ -1,7 +1,7 @@
 # Metadata parsing: legacy v1 partition specs without field IDs get table-wide IDs, so partition values are read under the wrong fields
 
-- Issue: 없음 (2026-10-24 검색: "partition field id missing v1", "partition field IDs v1", "assignMissingPartitionFieldIDs", "partition field-id 1000 legacy" → #1514(이 로직을 추가한 PR), #1988, #1641, #1662, #1665 는 per-spec 번호를 다루지 않음. open PR 없음)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: "partition field id missing v1", "partition field IDs v1", "assignMissingPartitionFieldIDs", "partition field-id 1000 legacy" → #1514(이 로직을 추가한 PR), #1988, #1641, #1662, #1665 는 per-spec 번호를 다루지 않음. open PR 없음)
+- Verified against main `2e69b8a` (2026-11-06)
 - **먼저 방향 질문**: #1514 는 "spec 사이에서 생성된 ID 가 충돌하지 않도록" 테이블 전체 기준 할당을 **의도적으로** 선택했습니다. 이 issue 는 그 결정을 v1 레거시 spec 에 한해 뒤집자는 제안이라 메인테이너 동의가 필요합니다.
 
 ## Issue 본문 초안
@@ -12,7 +12,7 @@ main (development)
 
 ### Please describe the bug 🐞
 
-#1514 assigns missing partition `field-id`s table-wide: one counter across all specs, starting after `last-partition-id` and every explicit ID (`table/metadata.go:2264-2330`).
+#1514 assigns missing partition `field-id`s table-wide: one counter across all specs, starting after `last-partition-id` and every explicit ID (`table/metadata.go:2270-2358`).
 
 For legacy **v1** metadata whose specs predate partition field IDs, that does not match the IDs the reference implementation used, and which are already written in the table's manifests:
 

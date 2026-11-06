@@ -1,8 +1,8 @@
 # rest: RenameView reports a missing destination namespace as ErrNoSuchView
 
-- Issue: 없음 (2026-10-24 검색: PR "rename view namespace", "NoSuchNamespaceException error type" → #2173(table 만), #1461(RenameView 추가)뿐. issue "rename view NoSuchNamespace" 결과 없음)
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: PR "rename view namespace", "NoSuchNamespaceException error type" → #2173(table 만), #1461(RenameView 추가)뿐. issue "rename view NoSuchNamespace" 결과 없음)
 - 관련: PR #2173 이 `RenameTable` 의 같은 문제를 고침. sibling 인 `RenameView` 는 빠짐
-- Verified against main `7768540`
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 
@@ -12,7 +12,7 @@ main (development)
 
 ### Please describe the bug 🐞
 
-`RenameView` maps every 404 from `POST /v1/views/rename` to `catalog.ErrNoSuchView` (`catalog/rest/rest.go:2820-2824`).
+`RenameView` maps every 404 from `POST /v1/views/rename` to `catalog.ErrNoSuchView` (`catalog/rest/rest.go:2749-2753`).
 
 The REST spec's rename 404 covers both a missing source view and a missing destination namespace. The two are distinguished by `error.type`. Java's `ErrorHandlers.ViewErrorHandler` maps a 404 with `type=NoSuchNamespaceException` to `NoSuchNamespaceException`.
 

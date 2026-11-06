@@ -68,7 +68,7 @@ func TestCaseInsensitiveRenameIdentifierColumn(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24 실행):
+수정 전 결과(2026-11-06, main `2e69b8a` 실행):
 
 ```text
 Error: Received unexpected error: identifier field not found: id
@@ -86,5 +86,5 @@ git commit -s -m "fix(table): keep identifier fields on a case-insensitive renam
 
 ## 6. 주의
 
-- 같은 함수의 `update-schema-rename-mutates-path` 와 줄이 가깝습니다. 그쪽을 먼저 머지한 뒤 이 브랜치를 rebase 하세요.
+- 같은 블록 위쪽의 `newFullName` 계산은 #2333 이 이미 고쳤습니다. 최신 main 에서 브랜치를 만들면 충돌은 없습니다.
 - Java 의 `SchemaUpdate.renameColumn` 도 identifier set 을 사용자 이름으로 다룹니다. 그래서 "Java parity" 가 아니라 "Go 의 caseSensitive=false 모드 안에서의 일관성" 문제로 설명하는 게 정확합니다.

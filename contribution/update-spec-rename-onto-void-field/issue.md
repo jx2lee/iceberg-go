@@ -1,7 +1,7 @@
 # UpdateSpec: RenameField onto a void field's name renames the wrong field
 
-- Issue: 없음 (2026-10-24 검색: "rename partition field void", "RenameField", "UpdateSpec rename" → #467(원래 UpdateSpec PR), #1834, #1651, #1641 은 무관)
-- Verified against main `7768540`
+- Issue: 없음 (2026-10-24 검색, 2026-11-06 재확인: "rename partition field void", "RenameField", "UpdateSpec rename" → #467(원래 UpdateSpec PR), #1834, #1651, #1641 은 무관)
+- Verified against main `2e69b8a` (2026-11-06)
 
 ## Issue 본문 초안
 

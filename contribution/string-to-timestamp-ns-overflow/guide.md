@@ -17,9 +17,9 @@
 
 | 파일 | 줄 | 무엇 |
 |---|---|---|
-| `literals.go` | 938- | `StringLiteral.To`: 타입별 `switch` |
-| 같은 파일 | 1014-1031 | `TimestampNsType`, `TimestampTzNsType` case: 고칠 곳 |
-| 같은 파일 | 836-841 | `TimestampLiteral.To` 의 #1533 범위 검사 (에러 메시지 스타일 참고) |
+| `literals.go` | 943- | `StringLiteral.To`: 타입별 `switch` |
+| 같은 파일 | 1019-1036 | `TimestampNsType`, `TimestampTzNsType` case: 고칠 곳 |
+| 같은 파일 | 842-844 | `TimestampLiteral.To` 의 #1533 범위 검사 (에러 메시지 스타일 참고) |
 | `literals_test.go` | | 기존 `StringLiteral` 변환 테스트들 |
 
 ## 4. 수정
@@ -82,7 +82,7 @@ func TestStringToTimestampNsOutOfRange(t *testing.T) {
 }
 ```
 
-수정 전 결과(2026-10-24, 같은 내용의 재현 테스트):
+수정 전 결과(2026-11-06 main `2e69b8a` 재확인, 같은 내용의 재현 테스트):
 
 ```text
 timestamp_ns: expected out-of-range error, got 2184-07-20 23:34:33.709551616
