@@ -3,7 +3,8 @@
 처음 정리한 것은 2026-10-24(main `7768540`)이고, 그 사이 upstream 에 커밋이 131개 들어와서 다시 확인했습니다.
 
 - **A. 코드에서 직접 찾은 결함**: upstream 에 issue 가 없습니다. 최신 main 에서 실패하는 Go 테스트로 재현했고, 수정을 적용하면 그 테스트와 해당 패키지 전체 테스트가 통과하는 것까지 확인했습니다.
-- **B. open issue 중 링크된 PR 이 없는 것**: 2026-11-06 기준으로 새로 조사했습니다.
+- **B. 기존 open issue 재현**: 링크된 PR 이 없는 bug issue 4건을 재현하고 폴더를 만들었습니다.
+- **C. 지금 기여할 수 있는 open issue**: 쉬운 순으로 정리했습니다.
 
 각 폴더에는 세 파일이 있습니다.
 - `issue.md`: 올릴 issue 초안과 재현 결과
@@ -18,6 +19,7 @@
 - **남은 10건은 모두 최신 main 에서 그대로 재현**되고, `guide.md` 의 수정도 그대로 적용됩니다. 각 문서의 줄 번호를 `2e69b8a` 기준으로 고쳤습니다.
 - `string-to-decimal-rounding`: `iceberg.DecimalTypeOf` 가 `(type, error)` 를 반환하도록 바뀌어서 테스트 코드를 고쳤습니다.
 - `rest-update-view-commit-state-unknown`: #2350 이 `CommitTable` 에 4xx → `ErrCommitRejected` 매핑을 추가했다는 점을 guide 에 적었습니다.
+- 기존 issue 4건(#2425, #701, #2407, #2452)을 재현해서 `issue-<번호>-...` 폴더로 추가했습니다(B).
 
 ## A. 코드에서 찾은 결함 (모두 issue 없음, 2026-11-06 기준 중복 PR 없음)
 
@@ -39,44 +41,61 @@
 - 각 `guide.md` 의 수정 코드를 모두 적용하면 위 테스트가 통과하고, `go test . ./table/... ./view/... ./catalog/...` 도 전부 통과.
 - `make lint` 는 돌리지 않았으니 PR 전에 실행하세요.
 
-## B. open issue 중 PR 이 링크되지 않은 것 (2026-11-06 확인)
+## B. 기존 open issue 재현 (2026-11-06, main `2e69b8a`)
 
-조사 시점 기준: open issue 64개, open PR 52개. 착수 전에 issue 에 다른 사람의 댓글이 새로 달렸는지 다시 보세요.
+issue 가 이미 있으니 `issue.md` 에는 claim 댓글 초안(올리지 않음)과 재현 결과를 넣었습니다. 네 건 모두 직접 다시 돌려서 수정 전에는 FAIL, 수정 후에는 PASS 인 것을 확인했고, 네 수정을 함께 적용한 상태에서 `go test . ./table/... ./catalog/...` 도 전부 통과합니다.
 
-### 지금 잡을 수 있는 것
+| 폴더 | 이슈 | 난이도 | 재현 | 지금 가져갈 수 있나 |
+|---|---|---|---|---|
+| `issue-2425-row-filter-dictionary-column` | #2425 dictionary 컬럼에 row filter 를 걸면 실패 | ★★ | 단위 테스트 실패(`...was dictionary<values=utf8...>, but should have been utf8`) | **가능.** 댓글·담당자·PR 없음. 작성자(hcrosse)의 #2427·#2442·#2445 는 equality delete 쪽만 고쳐서 겹치지 않음. 작성자가 이 영역을 계속 작업 중이라 claim 댓글부터 |
+| `issue-701-glue-large-schema-payload` | #701 Glue 에서 큰 schema 일 때 payload 한도 초과 | ★★ | 가짜 HTTP 클라이언트로 요청 크기를 쟀을 때 컬럼 3600개 = 546,378B > 400KB | **방향 질문 먼저.** Java·PyIceberg 도 같은 동작. 새 property(`glue.schema-columns`)를 둘지는 #769 리뷰에서 "dev@ 에서 논의하라"는 답을 받고 멈춘 상태. 400KB 는 공식 문서가 아니라 사용자 보고값 |
+| `issue-2407-empty-string-partition-bound` | #2407 빈 문자열 partition 값 때문에 manifest 를 통째로 건너뜀 | ★ | 단위 테스트 실패(`empty lower bound written as null`) | **어려움.** 작성자가 본문에 "fix 와 regression test 가 준비돼 있고 직접 하겠다"고 적음. 1~2주 PR 이 없을 때만 물어보기. 공부용으로는 가장 좋음 |
+| `issue-2452-update-schema-last-column-id-panic` | #2452 `last-column-id` 가 기존 field ID 보다 작으면 UpdateSchema 가 panic | ★ | 단위 테스트 panic | **불가.** 작성자가 같은 날 PR #2453 을 올림(open). 리뷰로만 참여 가능 |
 
-| 이슈 | 종류 | 상태 | 난이도 |
-|---|---|---|---|
-| #2452 UpdateSchema Apply/Commit 이 `last-column-id` < 기존 field ID 일 때 panic | bug | 2026-11-06 등록. 댓글·PR 없음. 작성자(Shruthirdy)가 직접 고칠 수도 있으니 먼저 물어보기 | 쉬움 |
-| #2407 빈 문자열 partition 값 때문에 필터 scan 이 manifest 전체를 건너뜀 | bug | 2026-11-03 등록, 재현 포함. 댓글·PR 없음 | 보통 |
-| #2425 embedded Arrow schema 에서 dictionary 타입 컬럼에 row filter 가 실패 | bug | 담당자 없음. #2427 은 equality delete 쪽만 고침. 작성자(hcrosse)가 근처 작업(#2442, #2445) 중이라 겹칠 수 있음 | 보통 |
-| #701 Glue `updateTable` 이 큰 schema 에서 실패 | bug | 메인테이너가 원인(`constructTableInput` 이 과거 컬럼까지 직렬화)을 짚어 둠. 이전 draft #769 는 닫힘. 담당자 없음. 실제 Glue 없이 단위 테스트로 크기 검증 가능할지 확인 필요 | 보통 |
-| #2371 changelog 파일을 순서를 지키며 병렬로 읽기 | perf | #2170 리뷰의 후속. 담당자 없음 | 보통 |
-| #2370 snapshot 이 delete 를 추가할 때 changelog planning 이 모든 data manifest 를 읽음 | perf | #2169 리뷰의 후속. 담당자 없음 | 보통~어려움 |
-| #1535 CI 에서 Docker pull 재시도 | ci | 2026-08-02 에 claim 됐지만 그 뒤 PR 없음. 먼저 물어보기 | 쉬움 |
-| #1793 SQLITE_BUSY flaky test | test | claim 이 둘(8월, 10-23)인데 PR 없음. 메인테이너가 `busy_timeout` 방식을 제안해 둠. 아직 하는 사람이 있는지 불확실 | 쉬움 |
+## C. 지금 기여할 수 있는 open issue, 쉬운 순 (2026-11-06)
+
+서브에이전트가 open issue 64건을 전부 보고, 고칠 코드 위치까지 확인해서 정리했습니다. 난이도 1 은 함수 하나에서 몇 줄 고치는 수준이고, 5 는 여러 패키지에 걸친 설계 작업입니다. B 에서 직접 재현한 것 말고는 제가 다시 확인하지 않았으니, 착수 전에 issue 를 다시 보세요.
+
+| 순위 | 이슈 | 종류 | 난이도 | 고칠 곳 | 주의 |
+|---|---|---|---|---|---|
+| 1 | #1535 CI 에서 docker pull 재시도 | ci | 1 | `.github/workflows/go-integration.yml`, Makefile `integration-setup*` | 08-02 claim 이후 PR 없음(stale). CI 와 Makefile 중 어디에 넣을지 issue 가 묻고 있음 |
+| 2 | #1015 `CommitNumRetriesDefault` 를 0 → 4 로 | feature | 1 | `table/properties.go:189` | 기본값 정책이라 메인테이너 판단 필요 |
+| 3 | #2407 빈 문자열 partition bound | bug | 1 | `manifest.go` `toSummary` | B 참고. 작성자가 사실상 claim |
+| 4 | #2425 dictionary 컬럼 row filter | bug | 2 | `table/arrow_scanner.go` `filterRecords` | B 참고. **지금 가장 추천** |
+| 5 | #701 Glue 큰 schema | bug | 2 | `catalog/glue/glue.go` `constructTableInput` | B 참고. 설계 결정 필요 |
+| 6 | #1086 v1/v2 metadata 의 v3 전용 필드 허용 | feature | 2 | `table/metadata.go` `versionScopedField` | dev@ 논의 대기 |
+| 7 | #2371 changelog 파일 병렬 읽기 | perf | 3 | `table/changelog_reader.go` `Read` | 순서 유지와 limit 처리가 까다로움 |
+| 8 | #2443 REST Idempotency-Key 지원 | feature | 3 | `catalog/rest/rest.go` `do`/`doPost` | `scan_planning.go` 의 기존 helper 재사용 가능. 5xx 재시도 범위 주의, 스펙 지식 필요 |
+| 9 | #1097 Hadoop `RenameTable` | feature | 3 | `catalog/hadoop` | Java 는 일부러 구현하지 않음. 설계 결정 필요 |
+| 10 | #1792 REST `snapshots=refs` 일 때 나머지 snapshot lazy-load | feature | 3 | `catalog/rest` `LoadTable` + table | 작성자가 08-26 "working on this" 이후 PR 없음(stale) |
+| 11 | #2370 changelog planning 이 manifest 를 너무 많이 읽음 | perf | 4 | `table/incremental_changelog_deletes.go` | delete 적용 규칙을 알아야 하고 정확성 위험이 있음 |
+| 12 | #2410 scan 결과에서 Parquet dictionary 인코딩 유지 | feature | 4 | reader·cast·filter 경로 전반 | 공개 API 설계 필요. hcrosse 가 작업 중인 영역 |
+| 13 | #2344 정렬 compaction Phase 2(spill to disk) | feature | 4 | `table/sort_compaction.go` | Phase 1 작성자가 이어서 할 가능성이 큼 |
+| 14 | #1262 Windows CI | ci | 5 | 여러 패키지 | 성격상 tracking 이라 쪼개서 진행해야 함 |
 
 ### close 요청만 하면 되는 것
 
-| 이슈 | 상태 |
+| 이슈 | 근거 |
 |---|---|
-| #2063 TruncateTransform UTF-8 | open 이지만 #1198·#1223 으로 v0.7.0 에서 해결됨(댓글로 확인). close 요청 |
-| #2131 `NOT(x<5)` 와 NaN | open 이지만 #2355(2026-11-04 머지)가 연결돼 있어 사실상 해결 |
-| #1868 DV supersession 검사 | open 이지만 #2054(10-14 머지)가 모든 commit 에서 검사한다고 함. 해결 여부 확인 후 close 요청 |
+| #2063 TruncateTransform UTF-8 | #1198·#1223 으로 v0.7.0 에서 해결 |
+| #2131 `NOT(x<5)` 와 NaN | #2355("Closes #2131")가 11-04 에 머지됐는데 자동으로 닫히지 않음 |
+| #1868 DV supersession 검사 | #2054(10-14)가 모든 commit 에서 검사 |
+| #2360 NaN value count | #2420(11-04)이 `nan_value_counts` 기록을 시작. double 도 포함하는지는 불확실 |
+| #1793 SQLITE_BUSY flaky | #2036(10-01)이 재시도 횟수를 늘림. 그 뒤 재발했는지는 불확실 |
+| #2428 OAuth2 manager export | #2433(11-05)으로 1번 제안은 끝남. 남은 GoogleAuthManager 는 별도 issue 로 나누면 됨 |
 
 ### 제외
 
-| 이슈 | 이유 |
+| 이유 | 이슈 |
 |---|---|
-| #1847, #2132, #2215, #2181 | 이전 목록에 있던 것. 각각 #1861, #2369, #2352, #2417 로 닫힘 |
-| #2082 CLI `--output` | eneskeles 가 담당 중(9/30~, PR 없음). 다른 사람도 손을 든 상태 |
-| #2195 DV replay | richiebachala 가 작성자 승인을 받고 진행 중 |
-| #1685, #1687 UpdateSchema nested | draft PR #1688 이 08-08 이후 멈춰 있음. 하고 싶으면 badalprasadsingh 에게 먼저 물어보기 |
-| #2393, #2406, #2311, #2160 | 이미 claim 됨 |
-| #1119, #2388, #2446, #2339 | open PR 있음(#1128, #2389·#2390, #2447, #2354) |
-| #2416 | arrow-go#1448 에 막혀 있음 |
-| #860, #538 | 조사 난이도가 높거나 iceberg-go 문제가 아니라고 정리됨 |
-| 나머지 | 기능 요청·tracking·epic 이거나 메인테이너 담당 |
+| open PR 있음 | #2452(#2453), #2446, #2388, #2339, #2040, #1929, #1685·#1687(#1688, 08-08 이후 멈춤), #1119, #1215·#1216 |
+| 담당자 있음 | #2083, #2082, #2062, #1433, #1178, #1079, #989 |
+| 최근 6주 안에 claim | #2406, #2393, #2311, #2195, #2160, #2152, #2416(arrow-go 릴리스 대기) |
+| tracking·epic·질문 | #2411–#2415, #1691, #1289, #485, #183, #4 |
+| 외부 요인 대기 | #2043(Java 쪽 안정화), #1880(Docker 이미지) |
+| 설계 보류·우선순위 낮음 | #2154, #2044, #1149, #696, #399 |
+| 버그 아님·재현 불가 | #538, #860 |
+| 이전 목록에서 닫힌 것 | #1847, #2132, #2215, #2181 |
 
 ## 검토했지만 제외한 후보 (코드 리뷰 중)
 
