@@ -59,19 +59,25 @@ issue 가 이미 있으니 `issue.md` 에는 claim 댓글 초안(올리지 않�
 | 순위 | 이슈 | 종류 | 난이도 | 고칠 곳 | 주의 |
 |---|---|---|---|---|---|
 | 1 | #1535 CI 에서 docker pull 재시도 | ci | 1 | `.github/workflows/go-integration.yml`, Makefile `integration-setup*` | 08-02 claim 이후 PR 없음(stale). CI 와 Makefile 중 어디에 넣을지 issue 가 묻고 있음 |
-| 2 | #1015 `CommitNumRetriesDefault` 를 0 → 4 로 | feature | 1 | `table/properties.go:189` | 기본값 정책이라 메인테이너 판단 필요 |
-| 3 | #2407 빈 문자열 partition bound | bug | 1 | `manifest.go` `toSummary` | B 참고. 작성자가 사실상 claim |
-| 4 | #2425 dictionary 컬럼 row filter | bug | 2 | `table/arrow_scanner.go` `filterRecords` | B 참고. **지금 가장 추천** |
-| 5 | #701 Glue 큰 schema | bug | 2 | `catalog/glue/glue.go` `constructTableInput` | B 참고. 설계 결정 필요 |
-| 6 | #1086 v1/v2 metadata 의 v3 전용 필드 허용 | feature | 2 | `table/metadata.go` `versionScopedField` | dev@ 논의 대기 |
-| 7 | #2371 changelog 파일 병렬 읽기 | perf | 3 | `table/changelog_reader.go` `Read` | 순서 유지와 limit 처리가 까다로움 |
-| 8 | #2443 REST Idempotency-Key 지원 | feature | 3 | `catalog/rest/rest.go` `do`/`doPost` | `scan_planning.go` 의 기존 helper 재사용 가능. 5xx 재시도 범위 주의, 스펙 지식 필요 |
-| 9 | #1097 Hadoop `RenameTable` | feature | 3 | `catalog/hadoop` | Java 는 일부러 구현하지 않음. 설계 결정 필요 |
-| 10 | #1792 REST `snapshots=refs` 일 때 나머지 snapshot lazy-load | feature | 3 | `catalog/rest` `LoadTable` + table | 작성자가 08-26 "working on this" 이후 PR 없음(stale) |
-| 11 | #2370 changelog planning 이 manifest 를 너무 많이 읽음 | perf | 4 | `table/incremental_changelog_deletes.go` | delete 적용 규칙을 알아야 하고 정확성 위험이 있음 |
-| 12 | #2410 scan 결과에서 Parquet dictionary 인코딩 유지 | feature | 4 | reader·cast·filter 경로 전반 | 공개 API 설계 필요. hcrosse 가 작업 중인 영역 |
-| 13 | #2344 정렬 compaction Phase 2(spill to disk) | feature | 4 | `table/sort_compaction.go` | Phase 1 작성자가 이어서 할 가능성이 큼 |
-| 14 | #1262 Windows CI | ci | 5 | 여러 패키지 | 성격상 tracking 이라 쪼개서 진행해야 함 |
+| 2 | #2407 빈 문자열 partition bound | bug | 1 | `manifest.go` `toSummary` | B 참고. 작성자가 사실상 claim |
+| 3 | #2425 dictionary 컬럼 row filter | bug | 2 | `table/arrow_scanner.go` `filterRecords` | B 참고. **지금 가장 추천** |
+| 4 | #701 Glue 큰 schema | bug | 2 | `catalog/glue/glue.go` `constructTableInput` | B 참고. 설계 결정 필요 |
+| 5 | #1086 v1/v2 metadata 의 v3 전용 필드 허용 | feature | 2 | `table/metadata.go` `versionScopedField` | dev@ 논의 대기 |
+| 6 | #2371 changelog 파일 병렬 읽기 | perf | 3 | `table/changelog_reader.go` `Read` | 순서 유지와 limit 처리가 까다로움 |
+| 7 | #2443 REST Idempotency-Key 지원 | feature | 3 | `catalog/rest/rest.go` `do`/`doPost` | `scan_planning.go` 의 기존 helper 재사용 가능. 5xx 재시도 범위 주의, 스펙 지식 필요 |
+| 8 | #1097 Hadoop `RenameTable` | feature | 3 | `catalog/hadoop` | Java 는 일부러 구현하지 않음. 설계 결정 필요 |
+| 9 | #1792 REST `snapshots=refs` 일 때 나머지 snapshot lazy-load | feature | 3 | `catalog/rest` `LoadTable` + table | 작성자가 08-26 "working on this" 이후 PR 없음(stale) |
+| 10 | #2370 changelog planning 이 manifest 를 너무 많이 읽음 | perf | 4 | `table/incremental_changelog_deletes.go` | delete 적용 규칙을 알아야 하고 정확성 위험이 있음 |
+| 11 | #2410 scan 결과에서 Parquet dictionary 인코딩 유지 | feature | 4 | reader·cast·filter 경로 전반 | 공개 API 설계 필요. hcrosse 가 작업 중인 영역 |
+| 12 | #2344 정렬 compaction Phase 2(spill to disk) | feature | 4 | `table/sort_compaction.go` | Phase 1 작성자가 이어서 할 가능성이 큼 |
+| 13 | #1262 Windows CI | ci | 5 | 여러 패키지 | 성격상 tracking 이라 쪼개서 진행해야 함 |
+
+**#1015(commit 재시도 기본값 0 → 4)는 표에서 뺐습니다.** 상수 하나만 바꾸는 일이 아닙니다.
+- 이 issue 는 `discussion` 질문으로 올라온 것이고, 메인테이너가 아직 결정하지 않았습니다.
+- #1652(문서 주석 수정 PR)에서 twuebi 가 "기본값도 바꾸자"고 했지만, alessandro-nori 는 breaking change 라며 망설였습니다. laskoviymishka 는 조용한 동작 변경(충돌이 늦게 드러남, 재시도 경로를 기본으로 타게 됨)이라는 위험을 짚고 "별도 PR 로 하자"고 해서 미뤄졌습니다.
+- 2026-11-06 main 에서 기본값만 4로 바꿔 보면 `./table` 테스트 7개가 실패합니다(`TestResumeDeterministicRejectionsMakeTransactionUnusable` 의 subtest 11개, `TestTransactionCommit_RetriableAfterCleanConflict` 등). 실패 메시지를 보면 재시도가 켜졌을 때 충돌 뒤의 transaction 이 "cannot be committed again" 으로 바뀝니다. 즉 latency 만이 아니라 같은 transaction 으로 다시 `Commit` 할 수 있는지가 달라질 수 있습니다(테스트가 기본값 0에 기대고 있는 것인지, 실제 사용자 동작 변화인지는 더 봐야 함).
+- 고치려면 상수, `properties.go` 주석, `website/src/concurrent-writes.md`·`api.md`·`configuration.md`, 위 테스트들, release note 와 breaking change 표시(`!`)가 함께 바뀌어야 합니다. richiebachala 가 10-04 에 "비교 테스트를 돕겠다"고 남겼습니다(claim 은 아님).
+- 할 수 있는 일: 위 테스트 결과를 issue 에 근거로 남겨 결정을 돕는 것까지입니다. 구현은 메인테이너가 0 → 4 를 정한 뒤에 하세요.
 
 ### close 요청만 하면 되는 것
 
